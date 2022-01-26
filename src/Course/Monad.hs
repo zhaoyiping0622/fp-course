@@ -36,8 +36,8 @@ instance Monad ExactlyOne where
     (a -> ExactlyOne b)
     -> ExactlyOne a
     -> ExactlyOne b
-  (=<<) =
-    error "todo: Course.Monad (=<<)#instance ExactlyOne"
+  (=<<) f = f . runExactlyOne
+    -- error "todo: Course.Monad (=<<)#instance ExactlyOne"
 
 -- | Binds a function on a List.
 --
@@ -48,8 +48,8 @@ instance Monad List where
     (a -> List b)
     -> List a
     -> List b
-  (=<<) =
-    error "todo: Course.Monad (=<<)#instance List"
+  (=<<) f = foldRight (\x y -> f x ++ y) Nil
+    -- error "todo: Course.Monad (=<<)#instance List"
 
 -- | Binds a function on an Optional.
 --
@@ -60,8 +60,10 @@ instance Monad Optional where
     (a -> Optional b)
     -> Optional a
     -> Optional b
-  (=<<) =
-    error "todo: Course.Monad (=<<)#instance Optional"
+  (=<<) f x = case x of 
+    Empty -> Empty
+    Full x' -> f x'
+    -- error "todo: Course.Monad (=<<)#instance Optional"
 
 -- | Binds a function on the reader ((->) t).
 --
@@ -72,8 +74,8 @@ instance Monad ((->) t) where
     (a -> ((->) t b))
     -> ((->) t a)
     -> ((->) t b)
-  (=<<) =
-    error "todo: Course.Monad (=<<)#instance ((->) t)"
+  (=<<) f a = \t -> f (a t) t
+    -- error "todo: Course.Monad (=<<)#instance ((->) t)"
 
 -- | Witness that all things with (=<<) and (<$>) also have (<*>).
 --
@@ -111,8 +113,8 @@ instance Monad ((->) t) where
   k (a -> b)
   -> k a
   -> k b
-(<**>) =
-  error "todo: Course.Monad#(<**>)"
+(<**>) f a = f >>= (<$> a)
+  -- error "todo: Course.Monad#(<**>)"
 
 infixl 4 <**>
 
@@ -133,8 +135,8 @@ join ::
   Monad k =>
   k (k a)
   -> k a
-join =
-  error "todo: Course.Monad#join"
+join = (id =<<)
+  -- error "todo: Course.Monad#join"
 
 -- | Implement a flipped version of @(=<<)@, however, use only
 -- @join@ and @(<$>)@.
@@ -147,8 +149,8 @@ join =
   k a
   -> (a -> k b)
   -> k b
-(>>=) =
-  error "todo: Course.Monad#(>>=)"
+(>>=) x = (=<< x)
+  -- error "todo: Course.Monad#(>>=)"
 
 infixl 1 >>=
 
@@ -163,8 +165,8 @@ infixl 1 >>=
   -> (a -> k b)
   -> a
   -> k c
-(<=<) =
-  error "todo: Course.Monad#(<=<)"
+(<=<) f g x = f =<< g x
+  -- error "todo: Course.Monad#(<=<)"
 
 infixr 1 <=<
 
