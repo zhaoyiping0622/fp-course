@@ -76,8 +76,9 @@ headOr ::
   a
   -> List a
   -> a
-headOr =
-  error "todo: Course.List#headOr"
+headOr x Nil = x
+headOr _ (x:._) = x
+  -- error "todo: Course.List#headOr"
 
 -- | The product of the elements of a list.
 --
@@ -92,8 +93,9 @@ headOr =
 product ::
   List Int
   -> Int
-product =
-  error "todo: Course.List#product"
+product Nil = 1
+product (x:.xs) = x * product xs
+  -- error "todo: Course.List#product"
 
 -- | Sum the elements of the list.
 --
@@ -107,8 +109,9 @@ product =
 sum ::
   List Int
   -> Int
-sum =
-  error "todo: Course.List#sum"
+sum Nil = 0
+sum (x:.xs) = x + sum xs
+  -- error "todo: Course.List#sum"
 
 -- | Return the length of the list.
 --
@@ -119,8 +122,9 @@ sum =
 length ::
   List a
   -> Int
-length =
-  error "todo: Course.List#length"
+length Nil = 0
+length (_:.xs) = 1 + length xs
+  -- error "todo: Course.List#length"
 
 -- | Map the given function on each element of the list.
 --
@@ -134,8 +138,9 @@ map ::
   (a -> b)
   -> List a
   -> List b
-map =
-  error "todo: Course.List#map"
+map _ Nil = Nil
+map f (x:.xs) = f x :. map f xs
+  -- error "todo: Course.List#map"
 
 -- | Return elements satisfying the given predicate.
 --
@@ -151,8 +156,11 @@ filter ::
   (a -> Bool)
   -> List a
   -> List a
-filter =
-  error "todo: Course.List#filter"
+filter _ Nil = Nil
+filter f (x:.xs) 
+  | f x = x :. filter f xs
+  | otherwise = filter f xs
+  -- error "todo: Course.List#filter"
 
 -- | Append two lists to a new list.
 --
@@ -170,8 +178,9 @@ filter =
   List a
   -> List a
   -> List a
-(++) =
-  error "todo: Course.List#(++)"
+(++) Nil x = x
+(++) (x:.xs) y = x:.(xs++y)
+  -- error "todo: Course.List#(++)"
 
 infixr 5 ++
 
@@ -188,8 +197,9 @@ infixr 5 ++
 flatten ::
   List (List a)
   -> List a
-flatten =
-  error "todo: Course.List#flatten"
+flatten Nil = Nil
+flatten (x:.xs) = x ++ flatten xs
+  -- error "todo: Course.List#flatten"
 
 -- | Map a function then flatten to a list.
 --
@@ -205,8 +215,9 @@ flatMap ::
   (a -> List b)
   -> List a
   -> List b
-flatMap =
-  error "todo: Course.List#flatMap"
+flatMap _ Nil = Nil
+flatMap f (x:.xs) = f x ++ flatMap f xs
+  -- error "todo: Course.List#flatMap"
 
 -- | Flatten a list of lists to a list (again).
 -- HOWEVER, this time use the /flatMap/ function that you just wrote.
@@ -215,8 +226,8 @@ flatMap =
 flattenAgain ::
   List (List a)
   -> List a
-flattenAgain =
-  error "todo: Course.List#flattenAgain"
+flattenAgain = flatMap id
+  -- error "todo: Course.List#flattenAgain"
 
 -- | Convert a list of optional values to an optional list of values.
 --
@@ -240,8 +251,12 @@ flattenAgain =
 seqOptional ::
   List (Optional a)
   -> Optional (List a)
-seqOptional =
-  error "todo: Course.List#seqOptional"
+seqOptional Nil = Full Nil
+seqOptional (Empty:._) = Empty
+seqOptional ((Full x):.xs) = let t = seqOptional xs in case t of 
+  Empty -> Empty
+  Full p -> Full $ x:.p
+  -- error "todo: Course.List#seqOptional"
 
 -- | Find the first element in the list matching the predicate.
 --
@@ -263,8 +278,11 @@ find ::
   (a -> Bool)
   -> List a
   -> Optional a
-find =
-  error "todo: Course.List#find"
+find f Nil = Empty
+find f (x:.xs) 
+  | f x = Full x
+  | otherwise = find f xs
+  -- error "todo: Course.List#find"
 
 -- | Determine if the length of the given list is greater than 4.
 --
@@ -282,8 +300,13 @@ find =
 lengthGT4 ::
   List a
   -> Bool
-lengthGT4 =
-  error "todo: Course.List#lengthGT4"
+lengthGT4 x = lengthGT4' x 5
+  where
+    lengthGT4' _ 0 = True
+    lengthGT4' Nil n = False
+    lengthGT4' (_:.xs) n = lengthGT4' xs (n-1)
+
+  -- error "todo: Course.List#lengthGT4"
 
 -- | Reverse a list.
 --
@@ -299,8 +322,12 @@ lengthGT4 =
 reverse ::
   List a
   -> List a
-reverse =
-  error "todo: Course.List#reverse"
+reverse = reverse' Nil 
+  where 
+    reverse' :: List a -> List a -> List a 
+    reverse' x Nil = x
+    reverse' y (x:.xs) = reverse' (x:.y) xs
+  -- error "todo: Course.List#reverse"
 
 -- | Produce an infinite `List` that seeds with the given value at its head,
 -- then runs the given function for subsequent elements
@@ -314,8 +341,8 @@ produce ::
   (a -> a)
   -> a
   -> List a
-produce f x =
-  error "todo: Course.List#produce"
+produce f x = x :. produce f (f x)
+  -- error "todo: Course.List#produce"
 
 -- | Do anything other than reverse a list.
 -- Is it even possible?
@@ -329,8 +356,8 @@ produce f x =
 notReverse ::
   List a
   -> List a
-notReverse =
-  error "todo: Is it even possible?"
+notReverse = id
+  -- error "todo: Is it even possible?"
 
 ---- End of list exercises
 
