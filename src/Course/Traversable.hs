@@ -37,7 +37,7 @@ instance Traversable List where
     -> List a
     -> k (List b)
   traverse f =
-    foldRight (\a b -> (:.) <$> f a <*> b) (pure Nil)
+    foldRight (\a b -> flip (:.) <$> b <*> f a) (pure Nil)
 
 instance Traversable ExactlyOne where
   traverse ::

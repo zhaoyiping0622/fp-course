@@ -80,6 +80,15 @@ headOr x Nil = x
 headOr _ (x:._) = x
   -- error "todo: Course.List#headOr"
 
+head :: List a -> a
+head (x:.xs) = x
+head _ = undefined
+
+last :: List a -> List a
+last (x:.xs) = xs
+last _ = undefined
+
+
 -- | The product of the elements of a list.
 --
 -- >>> product Nil
