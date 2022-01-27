@@ -423,5 +423,5 @@ betweenSepbyComma ::
   -> Char
   -> Parser a
   -> Parser (List a)
-betweenSepbyComma a b c = betweenCharTok a b $ sepby c (is ',' .:. spaces)
+betweenSepbyComma a b c = betweenCharTok a b $ sepby c (spaces *> is ',' <* spaces)
   -- error "todo: Course.MoreParser#betweenSepbyComma"

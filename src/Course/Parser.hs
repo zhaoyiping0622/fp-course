@@ -142,7 +142,7 @@ instance Functor Parser where
     (a -> b)
     -> Parser a
     -> Parser b
-  (<$>) f a = P ((<$>) f . parse a)
+  (<$>) f a = P ((f <$>) . parse a)
      -- error "todo: Course.Parser (<$>)#instance Parser"
 
 -- | Return a parser that always succeeds with the given value and consumes no input.
@@ -465,6 +465,18 @@ thisMany ::
   -> Parser (List a)
 thisMany n = sequenceParser . replicate n
   -- error "todo: Course.Parser#thisMany"
+
+optionalListParsers ::
+  List (Parser (List a)) -> Parser (List a)
+optionalListParsers = foldRight (|||) (pure Nil)
+
+optionalListParser ::
+  Parser (List a) -> Parser (List a)
+optionalListParser x = x ||| valueParser Nil
+
+optionalChar::
+  Char -> Parser Chars
+optionalChar x = optionalListParser (is x .:. valueParser Nil)
 
 -- | This one is done for you.
 --
